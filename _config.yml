@@ -14,7 +14,7 @@ future: true
 # SNS settings
 RSS: false
 weibo_username:     u/7084253381
-zhihu_username:     u/e16882040a69   #实际是微博不是知乎
+zhihu_username:     u/e16882040a69   
 github_username:    BeeMan-zxz
 # twitter_username:   huxpro
 #facebook_username:  huxpro
