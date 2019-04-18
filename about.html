@@ -22,7 +22,7 @@ Language Selector
 
     <!--copied from markdown -->
     <blockquote><p>希望有一群可爱的同事和和蔼的领导,努力挣钱买House<br>
-    热爱的炸药,欲望是导火索,飞起...<br>
+    热爱是炸药,欲望是导火索,飞起...<br>
     喜欢昝狗ing...
     </p></blockquote>
 
@@ -86,24 +86,3 @@ Language Selector
 </script>
 
 
-<!-- Gitalk 评论 start  -->
-{% if site.gitalk.enable %}
-<!-- Gitalk link  -->
-<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-<script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
-
-<div id="gitalk-container"></div>
-    <script type="text/javascript">
-    var gitalk = new Gitalk({
-    clientID: '{{site.gitalk.clientID}}',
-    clientSecret: '{{site.gitalk.clientSecret}}',
-    repo: '{{site.gitalk.repo}}',
-    owner: '{{site.gitalk.owner}}',
-    admin: ['{{site.gitalk.admin}}'],
-    distractionFreeMode: {{site.gitalk.distractionFreeMode}},
-    id: 'about',
-    });
-    gitalk.render('gitalk-container');
-</script>
-{% endif %}
-<!-- Gitalk end -->
