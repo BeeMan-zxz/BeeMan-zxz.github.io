@@ -2,7 +2,7 @@
 
 ### [View Live Hux Blog &rarr;](https://huangxuan.me)
 
-![](http://huangxuan.me/img/blog-desktop.jpg)
+![](http://BeeMan-zxz.github.io/img/blog-desktop.jpg)
 
 
 
@@ -140,8 +140,8 @@ You can easily get started by modifying `_config.yml`:
 
 ```
 # Site settings
-title: Hux Blog             # title of your website
-SEOTitle: Hux Blog			# check out docs for more detail
+title: ZXZ Blog             # title of your website
+SEOTitle: ZXZ Blog			# check out docs for more detail
 description: "Cool Blog"    # ...
 
 # SNS settings      
