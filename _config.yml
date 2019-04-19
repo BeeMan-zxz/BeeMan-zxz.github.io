@@ -115,14 +115,14 @@ friends: [
         title: "hexo框架",
         href: "https://hexo.io/themes/"
     },{
-        # title: "Luke 的自留地",
-        # href: "http://hmqk1995.github.io"
+        title: "酷炫网页",
+        href: "https://tympanus.net/codrops/"
     },{
-        # title: "Ebn's Blog",
-        # href: "http://ebnbin.com/"
+        title: "17素材网",
+        href: "http://www.17sucai.com/"
     },{
-        # title: "SmdCn's Blog",
-        # href: "http://blog.smdcn.net"
+        title: "阮一峰js博文",
+        href: "http://www.ruanyifeng.com/blog/javascript/"
     },{
         # title: "David's Game",
         # href: "https://www.ruoyaowu.com/"
