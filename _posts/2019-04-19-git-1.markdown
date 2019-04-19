@@ -12,7 +12,7 @@ tags:
 
 >GitHub是一个面向开源及私有软件项目的托管平台，因为只支持git<br>
 >作为唯一的版本库格式进行托管，故名GitHub。<br>
->![参考链接](https://www.cnblogs.com/sdcs/p/8270029.html)
+>[参考链接](https://www.cnblogs.com/sdcs/p/8270029.html)
 
 了解github
 ==========
@@ -36,16 +36,18 @@ Web管理界面以外，还提供了订阅、讨论组、文本渲染、在线�
 
 
 
->![git下载地址](https://git-scm.com/)
+>[git下载地址](https://git-scm.com/)
 
 
 
-下载方法[^RUNOOB]
+下载方法
 =================
-[^RUNOOB]：很简单无脑next就可以！！！
+
 
 
 ![img](/img/gitdown.png)
+
+很简单无脑next就可以！！！
 
 *安装成功后鼠标右键会出现如此两个工具*
 
