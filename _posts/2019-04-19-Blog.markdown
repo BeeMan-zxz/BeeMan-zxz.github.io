@@ -28,7 +28,7 @@ tags:
 <br>创建github账号就不多说了。
 <br>创建github.io库有个点必须说一下。
 **名字一定要按照规则创建**
-![img](img\in-post\19-04-19.png)
+![img](../img/in-post/19-04-19.png)
 <br>这个库的名字必须是你的github名字.github.io，生成之后库里会有 `yml` 文件 一个github用户只能创建一个。
 <br>官网下载git.Bash 如果你是第一次用git那么你要在本地生成公钥 后续文章会分享 git 的使用。
 <br>你可以把大牛的博客直接下载到你的本地博客文件夹，不过首先要把你的github博客库`$ git clone`下来,然后你可以自己个性化一下，一般博客模板都有讲解
