@@ -2,7 +2,7 @@
 layout:     post
 title:      "git的基本操作"
 subtitle:   "git,github的使用,填些遇过的小坑"
-date:       2019-04-19 11:53
+date:       2019-04-19 21:50
 author:     "ZXZ"
 header-style:   "text"
 tags:
