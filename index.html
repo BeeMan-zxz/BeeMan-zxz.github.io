@@ -4,7 +4,7 @@ layout:     keynote
 iframe:     "zxzBlog/index.html"
 ---
 
-<!-- {% for post in paginator.posts %}
+{% for post in paginator.posts %}
 <div class="post-preview">
     <a href="{{ post.url | prepend: site.baseurl }}">
         <h2 class="post-title">
@@ -28,10 +28,10 @@ iframe:     "zxzBlog/index.html"
     </p>
 </div>
 <hr>
-{% endfor %} -->
+{% endfor %}
 
 <!-- Pager -->
-{% if paginator.total_pages > 1 %}
+<!-- {% if paginator.total_pages > 1 %}
 <ul class="pager">
     {% if paginator.previous_page %}
     <li class="previous">
@@ -44,4 +44,4 @@ iframe:     "zxzBlog/index.html"
     </li>
     {% endif %}
 </ul>
-{% endif %}
+{% endif %} -->
