@@ -5,6 +5,7 @@ subtitle:   "记录搭建Github Pages博客方法"
 date:       2019-04-19 11:53
 author:     "ZXZ"
 header-style:   "text"
+header-img: "img/post-bg-universe.jpg"
 tags:
     - Blog
     - 博客
