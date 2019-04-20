@@ -103,9 +103,9 @@ page-mathjax: false
 # Friends
 friends: [
     {
-    #     title: "Su",
-    #     href: "http://su.gallery/"
-    # },{
+         title: "前端-颜色库",
+         href: "https://flatuicolors.com/"
+     },{
         title: "W3c",
         href: "https://www.w3cschool.cn/"
     },{

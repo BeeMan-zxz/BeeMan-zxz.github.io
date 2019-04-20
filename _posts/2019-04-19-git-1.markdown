@@ -64,26 +64,46 @@ Web管理界面以外，还提供了订阅、讨论组、文本渲染、在线�
     `$ git config --global user.name "user.name"`
     你的有效邮箱：
     `$ git config --global user.email "yourmail@youremail.com.cn"`
+
 >当在GitHub中更改用户名时，git中并没有随之修改，需要自己进行修改
 >查看用户名以及邮箱，使用git config命令 如：`git config user.name` , `git config user.email`
 >修改用户名以及邮箱，使用git config 命令的--global参数  
->如： `git config --global user.name "your name"` , `git config --global user.email "your email"`
+>如： `git config --global user.name "your name"`
+`git config --global user.email "your email"`
 
 
 如果想要让你的文件从本地(你的电脑)传到Github上当然除了注册邮箱还不行还需要**创建密钥ssh key**
-    查看是否gou`cd ~/.ssh ` 若出现：`No such file or directory”` 则需要创建新的ssh key
+    查看是否村在 密钥 `cd ~/.ssh ` 若出现：`No such file or directory”` 则需要创建新的ssh key
     如此即可在C:\deskbook\文件夹中生成ssh keys。包括两个文件`rd_rsa`和`id_rsa.pub ` ：
+
+
     ```
+
     $ssh-keygen -t rsa -C "你的邮箱名"
-
     $指定目录: C:\deskbook\（说明：若在此处不输入路径，而直接按回车，则ssh keys生成后存放的路径为C:\User\.ssh）
+    $输入密码: 123456  //一般不要设置密码 直接按空格
+    $确认密码: 123456  //不然每次输入密码太麻烦了
 
-    $输入密码: 123456
-
-    $确认密码: 123456
     ```
+
+
+    ```
+
+    我的朋友不知道为什么这样创建不成功还有一种方法就是
+    ssh-keygen 然后输入一个路径或者直接按空格
+    按空格跳过的话密钥是在C/用户/你电脑的当前用户名称/.ssh
+
+    ```
+
+
 然后找到rd_rsa和id_rsa.pub所在目录打开id_rsa.pub 复制下来,登录自己的GitHub账号，找到Settings/SSH and GPG keys,
-添加即可，密钥添加完成，下次在使用时就不需要再添加密钥了。
+添加即可 *下图提示如何添加*，密钥添加完成，下次在使用时就不需要再添加密钥了。
+
+
+![img](/img/git-ssh-01.png)
+![img](/img/git-ssh-02.png)
+
+
 
 本地库就是通过`git init`出来的成为本地库的文件夹会多一个若隐若现的`.git`文件夹
 如果看不到就是没有成功或者是它默认隐藏了，你需要把它设置出来
