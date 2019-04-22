@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "JavaScript -- 选项卡功能"
+title:      "JavaScript/jQuery -- 选项卡功能"
 subtitle:   "记录选项卡功能,方便以后用"
 date:       2019-04-21 16:27
 author:     "ZXZ"
@@ -8,6 +8,7 @@ header-style:   "text"
 header-img: "img/home-bg-o.jpg"
 tags:
     - js
+    - jQuery
     - 选项卡
 ---
 
@@ -32,6 +33,7 @@ tags:
 
 ##详析代码
 
+**JavaScript**
 
 ```javaScript
 
@@ -68,7 +70,21 @@ tags:
         }
 ```
 
+**jQuery**
 
+```javaScript
+   $(document).ready(function(){
+            //mouseenter是jQuery里的鼠标进入元素的事件
+            $(".header span").mouseenter(function(){
+                //eq(num)索引
+                //index()返回指定元素相对于其他元素的位置
+                //addClass()给指定元素添加 class属性  removeClass()与之相反 是删除
+                //siblings 找到指定元素的同胞元素
+                $(".header span").eq($(this).index()).addClass("change").siblings().removeClass("change");
+                $(".content ul").hide().eq($(this).index()).show();
+            });
+        });
+```
 ##源码所在
 *这个是我用来js练手时候写的，写的不是很好希望谅解*
 
