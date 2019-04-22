@@ -145,8 +145,8 @@ friends: [
         title: "阮一峰js博文",
         href: "http://www.ruanyifeng.com/blog/javascript/"
     },{
-        # title: "David's Game",
-        # href: "https://www.ruoyaowu.com/"
+         title: "MDN web docs",
+         href: "https://developer.mozilla.org/zh-CN/"
     },{
         # title: "DHong Say",
         # href: "http://dhong.co"
