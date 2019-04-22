@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "html+css -- 选项卡功能"
+title:      "JavaScript -- 选项卡功能"
 subtitle:   "记录选项卡功能,方便以后用"
 date:       2019-04-21 16:27
 author:     "ZXZ"
