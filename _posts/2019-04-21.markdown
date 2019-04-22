@@ -5,7 +5,7 @@ subtitle:   "记录选项卡功能,方便以后用"
 date:       2019-04-21 16:27
 author:     "ZXZ"
 header-style:   "text"
-header-img: "img/home-bg-o.jpg"
+# header-img: "img/home-bg-o.jpg"
 tags:
     - js
     - 选项卡
@@ -33,7 +33,7 @@ tags:
 ##详析代码
 
 
-```javascript
+```javaScript
 
   window.onload = function() {
             //找到选项
