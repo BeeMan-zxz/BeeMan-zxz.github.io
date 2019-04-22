@@ -7,8 +7,8 @@ author:     "ZXZ"
 header-style:   "text"
 header-img: "img/home-bg-o.jpg"
 tags:
-    - Blog
-    - 博客
+    - js
+    - 选项卡
 ---
 
 
