@@ -1,15 +1,15 @@
 ---
 layout:     post
-title:      "JavaScript-DOM操作及事件"
-subtitle:   "怎么增删改查元素,绑定和去除绑定DOM事件"
+title:      "JavaScript-DOM操作及事件and事件监听"
+subtitle:   "怎么增删改查元素,绑定和去除绑定DOM事件and事件监听"
 date:       2019-04-27 09:57
 author:     "ZXZ"
 header-style:   "text"
 header-img: "img/home-bg-o.jpg"
 tags:
     - js
-    - 面试
     - DOM
+    - 事件监听
 ---
 
 
@@ -233,7 +233,7 @@ DOM操作
 
 DOM事件
 =======
-
+*[以下文章参考](http://blog.xieliqun.com/2016/08/12/event-delegate/)*
 
 >一般事件 onclick 鼠标点击时触发此事件
 
@@ -279,6 +279,10 @@ DOM事件
 
 **3.事件监听**
 
+>关于事件监听，W3C规范中定义了3个事件阶段，依次是捕获阶段、目标阶段、冒泡阶段。
+
+>W3C规范了两种事件机制，分为捕获阶段、目标阶段、冒泡阶段。IE8以前IE一直坚持自己的事件机制（前端人员一直头痛的兼容性问题），IE9以后IE也支持了W3C规范。
+
 *1.事件监听的优点 可以绑定多个事件。2.可以解除相应的绑定*
 
 *绑定事件的另一种方法是用 addEventListener() 或 attachEvent() 来绑定事件监听函数。下面详细介绍，事件监听。*
@@ -293,6 +297,17 @@ function：（必需）指定要事件触发时执行的函数。
 
 useCapture：（可选）指定事件是否在捕获或冒泡阶段执行。true，捕获。false，冒泡。默认false。
 
+```html
+
+	<button id="btn">Change</button>
+	<script>
+		var oCls=document.getElementById("btn").addEventListener("click",f);
+		
+		function f(){
+			alert("addEventListener监听事件")
+		}
+    </script>
+```
 
 **IE标准**
 
@@ -301,3 +316,180 @@ useCapture：（可选）指定事件是否在捕获或冒泡阶段执行。true
 event：（必需）事件类型。需加“on“，例如：onclick。
 
 function：（必需）指定要事件触发时执行的函数。
+
+```html
+
+<input type="button" value="click me" id="btn2">
+<script>
+document.getElementById("btn2").attachEvent("onclick",hello);
+function hello(){
+	alert("hello world!");
+}
+</script>
+
+```
+
+*目前我电脑上没有ie8一下的,我在Google上和ie9测试这个没办法实现*
+
+**所以我们最好就用addEventListener**
+
+
+事件监听的优点——可以绑定多个事件  and  事件监听的优点——可以解除相应的绑定
+--------------------------------------------------------------------
+
+*为了节省就一块儿讲了*
+
+```html
+
+	<button id="btn">Change</button>
+	<script>
+        var oCls=document.getElementById("btn");
+
+        /*
+        oCls.onclick = function(){
+			alert("hello1")    //不执行
+		}
+		oCls.onclick = function(){
+			alert("hello2")    //执行  会把事件一覆盖掉
+		}*/
+ 
+		oCls.addEventListener("click",f1);
+        oCls.addEventListener("click",f2);
+        oCls.removeEventListener("click",f3);
+        //当点击按钮时先弹出事件一再弹出事件二
+        //不会弹出事件二 因为被移除了
+		function f1(){
+			alert("addEventListener事件一")
+		}
+		function f2(){
+			alert("addEventListener事件二")
+        }
+        function f3(){
+			alert("addEventListener事件三")
+		}
+	</script>
+
+```
+
+
+封装监听事件
+-------------
+
+```html
+
+<input type="button" value="click me" id="btn5">
+<script>
+    //绑定监听事件
+    function addEventHandler(target,type,fn){
+        if(target.addEventListener){
+            target.addEventListener(type,fn);
+        }else{
+            target.attachEvent("on"+type,fn);    //这样就可以解决兼用的问题了
+        }
+    }
+    //移除监听事件
+    function removeEventHandler(target,type,fn){
+        if(target.removeEventListener){
+            target.removeEventListener(type,fn);
+        }else{
+            target.detachEvent("on"+type,fn);    //这样就可以解决兼用的问题了
+        }
+    }
+    //测试
+    var btn5 = document.getElementById("btn5");
+    addEventHandler(btn5,"click",hello1);//添加事件hello1
+    addEventHandler(btn5,"click",hello2);//添加事件hello2
+    removeEventHandler(btn5,"click",hello1);//移除事件hello1
+</script>
+
+```
+
+事件的委托
+----------
+
+>*提高JavaScript性能。事件委托可以显著的提高事件的处理速度，减少内存的占用*
+
+>*动态的添加DOM元素，不需要因为元素的改动而修改事件绑定*
+
+
+提高JavaScript性能。事件委托可以显著的提高事件的处理速度，减少内存的占用
+
+```html
+
+	<ul id="list">
+	  <li id="item1" >item1</li>
+	  <li id="item2" >item2</li>
+	  <li id="item3" >item3</li>
+	</ul>
+	<script>
+		var oUl=document.getElementById("list");
+		var item1 = document.getElementById("item1");
+		var item2 = document.getElementById("item2");
+        var item3 = document.getElementById("item3");
+        
+        // item1.onclick = function(){
+	    //     alert("hello item1");
+        // }
+        // item2.onclick = function(){
+	    //     alert("hello item2");
+        // }
+        // item3.onclick = function(){
+	    //     alert("hello item3");
+        // }
+        //相比上面的代码委托减少了内存的占用
+		oUl.addEventListener("click",function(event){
+			var target = event.target;    //event.target 经常用来实现事件委托   指向所点击的DOM元素
+			if(target == item1){
+				alert("hello item1");
+			}else if(target == item2){
+				alert("hello item2");
+			}else if(target == item3){
+				alert("hello item3");
+			}
+		})
+	</script>
+
+```
+
+动态的添加DOM元素，不需要因为元素的改动而修改事件绑定
+
+```html
+
+	<ul id="list">
+	  <li id="item1" >item1</li>
+	  <li id="item2" >item2</li>
+	  <li id="item3" >item3</li>
+	</ul>
+	<script>
+		var oUl=document.getElementById("list");
+		var item1 = document.getElementById("item1");
+		var item2 = document.getElementById("item2");
+        var item3 = document.getElementById("item3");
+
+        //点击item1到item3都有事件响应，但是点击item4时，没有事件响应。说明传统的事件绑定无法对动态添加的元素而动态的添加事件。
+        for(var i=0;i<item.length;i++){
+            (function(i){
+                item[i].onclick = function(){
+                    alert(item[i].innerHTML);
+                }
+            })(i)
+        }
+        //当点击item4时，item4有事件响应。说明事件委托可以为新添加的DOM元素动态的添加事件。
+		oUl.addEventListener("click",function(event){
+			var target = event.target;
+			if(target.ondeName="li"){
+				alert(target.innerHTML);
+			}
+        })
+        var node = document.createElement("li");
+        var textnode = document.createTextNode("item4");
+        //给li节点创建内容
+        node.appendChild(textnode)
+        //在父节点下创建新的li节点
+        oUl.appendChild(node)
+        //玄学发现
+        //list.appendChild(node)  也可以啊  不知道为什么
+
+	</script>
+
+```
