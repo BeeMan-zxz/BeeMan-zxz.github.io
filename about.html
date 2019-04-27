@@ -12,7 +12,7 @@ multilingual: true
     <!--copied from markdown -->
     <blockquote><p>希望有一群可爱的同事和和蔼的领导,努力挣钱买House<br>
     对生活充满了期待...<br>
-    喜欢丑昝ing...
+    喜欢丑Zaning...
     </p></blockquote>
 
     <p>Hi，我是鑫泽，一名励志成为Web全栈程序员🙃🙃。休闲的话喜欢梦三国怀旧游戏和王者荣耀，喜欢打篮球游泳。非非非常喜欢一些唯美酷炫的东西...</p>
@@ -72,9 +72,9 @@ multilingual: true
 </div> -->
 <!-- disqus 评论框 end -->
 
-
+{% if site.disqus_username %}
 <!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
-<!-- <script type="text/javascript">
+<script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "{{site.disqus_username}}";
     var disqus_identifier = "{{site.disqus_username}}/{{page.url}}";
@@ -85,6 +85,6 @@ multilingual: true
         dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     })();
-</script> -->
+</script>
 <!-- disqus 公共JS代码 end -->
-<!-- {% endif %} -->
+{% endif %}
