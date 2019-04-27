@@ -14,7 +14,9 @@ tags:
 
 
 >在js中我们可以找到元素并更改属性和样式或者添加或删除元素
+
 >我也可以绑定和去除绑定事件或去除绑定事件
+
 >也可以更改元素内容和样式
 
 DOM操作
@@ -48,12 +50,14 @@ DOM操作
 </script>
 
 ```
+
 如果找到该元素，则该方法将以对象（在 x 中）的形式返回该元素。
 
 如果未找到该元素，则 x 将包含 null
 
 
 **通过标签名查找**
+
 *通过标签名找到的是一个集合,我们必须知道这个集合中的具体情况才能准确的获得我们想要的元素*
 
 ```html
@@ -83,6 +87,7 @@ DOM操作
 ```
 
 **通过类名查找**
+
 *通过类名查找 HTML 元素在 IE 5,6,7,8 中无效。*
 
 ```html
@@ -103,6 +108,7 @@ DOM操作
 
 2.js操作HTML更改内容和属性and属性
 -------------------
+
 *修改 HTML 内容的最简单的方法时使用 innerHTML 属性。*
 
 ```html
@@ -228,38 +234,70 @@ DOM操作
 DOM事件
 =======
 
+
 >一般事件 onclick 鼠标点击时触发此事件
+
 >ondblclick 鼠标双击时触发此事件
+
 >onmousedown	按下鼠标时触发此事件
+
 >onmouseup	鼠标按下后松开鼠标时触发此事件
+
 >onmouseover	当鼠标移动到某对象范围的上方时触发此事件
+
 >onmousemove	鼠标移动时触发此事件
+
 >onmouseout	当鼠标离开某对象范围时触发此事件
+
 >onkeypress	当键盘上的某个键被按下并且释放时触发此事件.
+
 >onkeydown	当键盘上某个按键被按下时触发此事件
+
 >onkeyup	当键盘上某个按键被按放开时触发此事件
+
 >还有许多事件 参考 [DOM事件参考手册](http://www.w3school.com.cn/jsref/dom_obj_event.asp)
 
+
 **绑定事件三种方式**
+
 *为什么绑定事件：为了让行为，样式，内容分离*
 
 **1.直接在html标签内绑定**
+
 `<div id="school" onclick="t();">`
+
 这种写法最古老,兼容性最强.属于DOM的lev0级的标准.这个效果,等同于在点击div的时候,执行"t();"这一语句,
+
 在全局范围内执行,因此,t函数内部的this指代全局对象-->window 想操作被点击的DOM对象,用this就不行了.
+
 **2.在脚本中针对DOM对象绑定**
+
 `DOM对象.onclick = function () {}`
+
 在这种绑定方式中,只能给一个事件,绑定一个处理函数
+
+
 **3.事件监听**
+
 *1.事件监听的优点 可以绑定多个事件。2.可以解除相应的绑定*
+
 *绑定事件的另一种方法是用 addEventListener() 或 attachEvent() 来绑定事件监听函数。下面详细介绍，事件监听。*
+
 `element.addEventListener(event, function, useCapture)`
+
 **IE8以下不支持。**
+
 event : （必需）事件名，支持所有DOM事件。
+
 function：（必需）指定要事件触发时执行的函数。
+
 useCapture：（可选）指定事件是否在捕获或冒泡阶段执行。true，捕获。false，冒泡。默认false。
 
+
 **IE标准**
+
 `element.attachEvent(event, function)`
+
 event：（必需）事件类型。需加“on“，例如：onclick。
+
 function：（必需）指定要事件触发时执行的函数。
