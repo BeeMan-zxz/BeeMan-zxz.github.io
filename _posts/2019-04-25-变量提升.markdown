@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "JavaScript-变量提升,函数提升"
+title:      "Js-变量提升,函数提升"
 subtitle:   "理解变量提升and函数提升"
 date:       2019-04-25 21:28
 author:     "ZXZ"
