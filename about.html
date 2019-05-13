@@ -43,8 +43,8 @@ multilingual: true
 {% if site.gitalk.enable %}
 <!-- Gitalk link  -->
 <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-<script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
-
+<!-- <script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script> -->
+<script src="JavaScript-MD5-master/js/md5.min.js"></script>
 <div id="gitalk-container"></div>
     <script type="text/javascript">
     var gitalk = new Gitalk({
@@ -54,7 +54,8 @@ multilingual: true
     owner: '{{site.gitalk.owner}}',
     admin: ['{{site.gitalk.admin}}'],
     distractionFreeMode: '{{site.gitalk.distractionFreeMode}}',
-    id: 'about',
+    // id: 'about',
+    id:  md5(location.pathname),
     });
     gitalk.render('gitalk-container');
 </script>
