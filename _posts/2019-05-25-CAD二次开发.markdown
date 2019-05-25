@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "autoCAD基于C#的二次开发"
-subtitle:   "如果引用dll文件和注意事项,以及一些简单的项目"
+subtitle:   "一些基本操作和小程序"
 date:       2019-05-25 15:00
 author:     "ZXZ"
 header-style:   "text"
