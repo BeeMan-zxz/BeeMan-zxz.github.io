@@ -24,8 +24,160 @@ tags:
 >因此,要想让AutoCAD真正使用于某一具体领域,或让其经常完成一些重复性的工作,则必须利用AutoCAD的开发系统对其进行二次开发.
 
 
-# Hello World 之 autoCAD 二次C#开发
-
+**需要的工具**
 首先你需要下载autoCAD 
 [下载地址|提取码：2hpo](https://pan.baidu.com/s/1PAOjhY5i2G8dabYYADNeZw)
 
+我这里用的是 visual studio 2017 您可以百度搜索官网下载
+
+
+# Hello World 之 autoCAD 二次开发 C#
+
+>首先我们从 Hello World 程序了解二次开发的注意事项
+
+**引入autoCAD dll文件**
+
+![img](/img/autoCAD-01.png)
+
+这些是CAD二次开发必要的dll文件，引入之后把他们的复制本地的属性改位False，否则可能会报错
+
+接下来就是Hello World程序源码请看代码注释
+
+```C#
+//autoCAD二次开发头文件
+using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.EditorInput;
+using Autodesk.AutoCAD.Runtime;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Hello_World
+{
+    public class Class1
+    {
+        [CommandMethod("Hello World")]//设计新的命令
+
+        public void HelloWorld()
+        {
+            Document acDoc = Application.DocumentManager.MdiActiveDocument;//获取当前的活动文档
+            Editor acEd = acDoc.Editor;//当前编译器对象，命令行对象
+            acEd.WriteMessage("Hello World 2019 autoCAD");//控制命令行对象发一个消息
+        }
+
+    }
+}
+```
+
+接下来就是运行了，首先我们要右击解决方案管理器中右击项目名称点击属性
+
+![img](/img/autoCAD-02.png)
+
+点击运行，会自动启动CAD应用，新建一个CAD文档
+
+在命令框里输入NETLOAD找到刚刚运行生成的Hello World的dll文件
+
+在向输入框中输入你新设计的命令，我们这里是Hello World
+
+
+
+# autoCAD二次开发之画线 C#
+
+```C#
+using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.Geometry;
+using Autodesk.AutoCAD.Runtime;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+
+
+namespace _02NewLine
+{
+    public class Class1
+    {
+        [CommandMethod("NewLine")]
+        public void NewLine()
+        {
+            //获取当前活动的图形数据库
+            Database db = HostApplicationServices.WorkingDatabase;
+            //直线起始点
+            Point3d startPoint = new Point3d(0, 100, 0);
+            //直线结束点
+            Point3d endPoint = new Point3d(100, 100, 0);
+            //新建一个直线对象
+            Line line = new Line(startPoint, endPoint);
+            //定义一个指向当前数据库的事务处理，以添加直线
+            using (Transaction tran = db.TransactionManager.StartTransaction())
+            {
+                //以读的方式打开块表
+                BlockTable bt = (BlockTable)tran.GetObject(db.BlockTableId, OpenMode.ForRead);
+                //以写的方式打开模型空间块表记录.
+                BlockTableRecord btr = (BlockTableRecord)tran.GetObject(bt[BlockTableRecord.ModelSpace], OpenMode.ForWrite);
+                //将图形对象的信息添加到块表记录中,并返回ObjectId对象
+                btr.AppendEntity(line);
+                //把对象添加到事务处理中
+                tran.AddNewlyCreatedDBObject(line, true);
+                //提交事务处理
+                tran.Commit();
+            }
+        }
+    }
+}
+
+```
+
+# autoCAD二次开发之画圆 C#
+
+```C#
+using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.Geometry;
+using Autodesk.AutoCAD.Runtime;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace _03NewCricle
+{
+    public class Class1
+    {
+        [CommandMethod("NewCircle")]
+
+        public void NewCircle()
+        {
+            //获取当前活动的图形数据库
+            Database db = HostApplicationServices.WorkingDatabase;
+            //定义圆心和半径
+            Point3d circlePoint = new Point3d(300, 300, 0);
+            int ridus = 100;
+            //新建一个圆
+            Circle circle = new Circle(circlePoint, Vector3d.ZAxis, ridus);
+
+            //定义一个指向当前数据库的事务处理，以添加圆
+            using (Transaction tran = db.TransactionManager.StartTransaction())
+            {
+                //以读的方式打开块表
+                BlockTable bt = (BlockTable)tran.GetObject(db.BlockTableId, OpenMode.ForRead);
+                //以写的方式打开模型空间块表记录.
+                BlockTableRecord btr = (BlockTableRecord)tran.GetObject(bt[BlockTableRecord.ModelSpace], OpenMode.ForWrite);
+                //将图形对象的信息添加到块表记录中,并返回ObjectId对象
+                btr.AppendEntity(circle);
+                //把对象添加到事务处理中
+                tran.AddNewlyCreatedDBObject(circle, true);
+                //提交事务处理
+                tran.Commit();
+            }
+        }
+
+
+    }
+}
+
+```
