@@ -1,0 +1,112 @@
+---
+layout:     post
+title:      "C#实现动态数组类"
+subtitle:   "C#是如何实现动态数组类的"
+date:       2019-06-01 10:57
+author:     "ZXZ"
+header-style:   "text"
+header-img: "img/home-bg-art.jpg"
+tags:
+    - 动态数组
+    - C#
+---
+
+>C#创建一个动态数组类
+
+```C#
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+class CMyArray {
+    private int[] array;
+    private int[] capacity_array;
+    private int size;
+    private int count;
+    public int Count {
+        get { return count; }
+    }
+
+    public CMyArray() {
+        array = new int[10];
+        count = 0;
+        size = 10;
+    }
+
+    public int Append(int a) {
+        if (count >= size) {
+            capacity_array = new int[count + 1];
+            for (int i = 0; i < count; i++)
+                capacity_array[i] = array[i];
+            size++;
+            capacity_array[capacity_array.Length - 1] = a;
+            array = capacity_array;
+        }
+        else
+            array[count] = a;
+            
+        return count++;
+    }
+
+    public void Insert(int index, int a) {
+        if (count >= size) {
+            capacity_array = new int[count + 1];
+            for (int i = 0; i < count; i++) {
+                if (i == index) {
+                    for (int j = count - 1; j >= i; j--) {
+                        capacity_array[j + 1] = array[j];
+                    }
+                    capacity_array[i++] = a;
+                    break;
+                }
+                capacity_array[i] = array[i];
+            }
+            size++;
+            array = capacity_array;
+        }
+        else {
+            for(int i = 0; i < count; i++) {
+                if (i == index) {
+                    for (int j = count - 1; j >= i; j--) {
+                        int temp = array[j];
+                        array[j + 1] = temp;
+                    }
+                    array[i] = a;
+                }
+            }
+        }
+        count++;
+    }
+
+    public void RemoveAt(int index) {
+        if (index < count) {
+            for (int i = 0; i < count; i++) {
+                if (i == index) {
+                    for (int j = i + 1; j < count; j++) {
+                        array[j - 1] = array[j];
+                    }
+                }
+            }
+            count--;
+        }
+        else
+            throw new Exception("数组越界");
+    }
+
+    public void SetAt(int index, int a) {
+        if (index < count) 
+            array[index] = a;
+        else
+            throw new Exception("数组越界");
+    }
+
+    public int GetAt(int index) {
+        if (index < count)
+            return array[index];
+        else
+            throw new Exception("数组越界");
+    }
+}
+```
