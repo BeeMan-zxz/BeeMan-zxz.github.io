@@ -5,7 +5,7 @@ subtitle:   "C#winform利用NPOI对xls文件的操作一"
 date:       2019-07-02 08:42
 author:     "ZXZ"
 header-style:   "text"
-header-img: "post-bg-rwd.jpg"
+header-img: "img/post-bg-rwd.jpg"
 tags:
     - C#
     - NPOI
@@ -179,6 +179,18 @@ namespace NPOI_Test_1
 
 ```
 
+## 创建/打开 sheet页
+
+```C#
+
+    //创建一个新的名为SheetA的sheet页
+    ISheet sheet = wb.CreateSheet("SheetA");
+    //打开一个已有的名为SheetA的sheet页
+    ISheet sheet;
+    sheet = wb.GetSheet("SheetA")
+
+```
+
 ## 创建行和列
 
 
@@ -214,17 +226,6 @@ namespace NPOI_Test_1
 
 ```
 
-## 创建/打开 sheet页
-
-```C#
-
-    //创建一个新的名为SheetA的sheet页
-    ISheet sheet = wb.CreateSheet("SheetA");
-    //打开一个已有的名为SheetA的sheet页
-    ISheet sheet;
-    sheet = wb.GetSheet("SheetA")
-
-```
 
 ## 合并单元格
 
