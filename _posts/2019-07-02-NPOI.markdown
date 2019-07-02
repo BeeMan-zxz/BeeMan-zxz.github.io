@@ -16,11 +16,11 @@ tags:
 
 # NPOI的介绍
 
-## 什么是NPOI
+### 什么是NPOI
 
 NPOI 是指构建在 POI 3.x 版本之上的一个程序，NPOI 可以在没有安装 Office 的情况下对 Word 或 Excel 文档进行读写操作。
 
-##  为什么使用NPOI 
+###  为什么使用NPOI 
 
 比较常用的操作 Excel 的方法如下所示：
 
@@ -65,7 +65,7 @@ NPOI里面的管理层次为：workbook->worksheet->row->cell.
 
 # 使用
 
-## 针对昨天做的东西的理解的记录
+### 针对昨天做的东西的理解的记录
 
 废话不多说先上完整代码
 
@@ -148,13 +148,13 @@ namespace NPOI_Test_1
 
 ```
 
-## 引入库
+### 引入库
 
 ![img](/img/NPOI-1.png)
 
 如图所示这些库引入后NPOI的操作都可以完成了
 
-## 新建/打开
+### 新建/打开
 
 
 ```C#
@@ -179,7 +179,7 @@ namespace NPOI_Test_1
 
 ```
 
-## 创建/打开 sheet页
+### 创建/打开 sheet页
 
 ```C#
 
@@ -191,7 +191,7 @@ namespace NPOI_Test_1
 
 ```
 
-## 创建行和列
+### 创建行和列
 
 
 ```C#
@@ -208,7 +208,7 @@ namespace NPOI_Test_1
 
 ```
 
-## 写入内容
+### 写入内容
 
 ```C#
 
@@ -227,7 +227,7 @@ namespace NPOI_Test_1
 ```
 
 
-## 合并单元格
+### 合并单元格
 
 ```C#
 
