@@ -1,0 +1,238 @@
+---
+layout:     post
+title:      "NPOI之建,写,合并"
+subtitle:   "C#winform利用NPOI对xls文件的操作一"
+date:       2019-07-02 08:42
+author:     "ZXZ"
+header-style:   "text"
+header-img: "post-bg-rwd.jpg"
+tags:
+    - C#
+    - NPOI
+---
+
+>以下参考简书上面的作者[银冰雪千载](https://www.jianshu.com/p/d352a7f09228)
+>以及CSDN上面的作者[Icoding_F2014](https://blog.csdn.net/jmh1996/article/details/78225718)
+
+# NPOI的介绍
+
+## 什么是NPOI
+
+NPOI 是指构建在 POI 3.x 版本之上的一个程序，NPOI 可以在没有安装 Office 的情况下对 Word 或 Excel 文档进行读写操作。
+
+##  为什么使用NPOI 
+
+比较常用的操作 Excel 的方法如下所示：
+
+1 OLEDB
+这种方式是把整个 Excel 文件当做一个数据源来进行数据的读取操作。
+优点：实现方式简单，读取速度快。
+缺点：读取 Excel 数据的过程不太灵活，对内存的占用比较高，当数据量变的很大时，容易由于内存空间不足导致内存溢出异常。
+
+2 COM 组件
+这种方式是通过 COM 组件 Microsoft.Office.Interop.Excel.dll 实现 Excel 文件的操作。
+优点：读取 Excel 数据非常灵活，可以实现 Excel 具有的各种数据处理功能。
+缺点：对数据的访问时基于单元格方式实现的，所以读写数据较慢，特别是当数据量较大时，访问效率问题更为突出。另一点是要求本机安装了 Office 组件。
+
+3 NPOI
+这种方式是通过 NPOI 库实现 Excel 文件操作，可以在没有安装微软 Office 的情况下使用。详情可查看官网。
+优点：读取Excel数据速度较快，操作方式灵活。
+缺点：官方文档较少。
+
+4 ASPOSE
+Aspose 公司旗下的最全的一套 office 文档管理方案。支持 Word, Excel, PowerPoint, Project 等 office 文档以及 PDF 文档读写操作。
+优点：因商业驱动所以会有详细的使用文档和技术支持。
+缺点：需要收费使用。
+
+这里推荐使用 NPOI，因为 NPOI 不用额外安装 Office 组件，而且完全免费。接下来介绍如何使用 NPOI 。
+
+
+# 编程开发思想
+
+不管是读还是写一个excel文件，都要先生成一个HSSFWorkbook对象。 
+NPOI里面的管理层次为：workbook->worksheet->row->cell. 
+类比关系型数据库就是：
+
+| NPOI | 关系型数据库 |
+| :------: | :------: |
+| workbook | database |
+| worksheet | table表 |
+| row | record记录 |
+| cell | field字段 |
+
+形象的表达如图
+![img](/img/NPOI-2.jpg)
+
+# 使用
+
+## 针对昨天做的东西的理解的记录
+
+废话不多说先上完整代码
+
+```C#
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using NPOI.HSSF.UserModel;
+using NPOI.SS.UserModel;
+using NPOI.SS.Util;
+
+namespace NPOI_Test_1
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btn_Test_Click(object sender, EventArgs e)
+        {
+            //创建一个新的Excel文件的workbook对象
+            HSSFWorkbook wb = new HSSFWorkbook();
+            //FileStream file;
+            //string filepath = @"D:\测试NPOI.xls";
+            //file =new FileStream(filepath,FileMode.Open,FileAccess.Read);
+            //wb=new HSSFWorkbook(file);
+            //file.Close();
+            //在当前wb中创建一个名为sheet1的新的sheet页
+            //ISheet sheet = new ISheet();
+           // HSSFSheet sheet = new HSSFSheet();
+            ISheet sheet = wb.CreateSheet("Sheet1");
+            int num = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                sheet.CreateRow(i);//创建i行
+                for (int j = 0; j < 4; j++)
+                {
+                    ICell cell1 = sheet.GetRow(i).CreateCell(j);//在i某一行创建j列
+//                     cell1.SetCellValue(num);
+//                     num++;
+                }
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    ICell cell1 = sheet.GetRow(i).GetCell(j);
+                    cell1.SetCellValue(num);
+                    num++;
+                }
+            }
+            sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 1));
+            //D:\\测试NPOI_1.xls
+            FileStream sw = File.Create("D:\\测试NPOI_5.xls");
+           // file = new FileStream(filepath, FileMode.Open, FileAccess.Write);
+            wb.Write(sw);
+            sw.Close();  //资源释放
+            wb.Close();
+
+        }
+    }
+}
+
+
+```
+
+## 引入库
+
+![img](/img/NPOI-1.png)
+
+如图所示这些库引入后NPOI的操作都可以完成了
+
+## 新建/打开
+
+
+```C#
+    // 新建一个xls文件
+    //创建一个新的Excel文件的workbook对象
+    HSSFWorkbook wb = new HSSFWorkbook();
+
+    //保存路径及名称为 D:\\测试NPOI_1.xls
+    FileStream sw = File.Create("D:\\测试NPOI_5.xls");
+    //把wb写进sw文件中去
+    wb.Write(sw);
+    //资源释放  当时粗心把这个注释掉了 出现了程序跑起来之后创建了一个xls文件但是如果不把程序关了就打不开这个文件
+    sw.Close();  
+    wb.Close();
+
+    //打开一个已有的xls文件
+    HSSFWorkbook wb;
+    FileStream file;
+    file = new FileStream(filepath, FileMode.Open, FileAccess.Read);
+    wb = new HSSFWorkbook(file);
+    file.Close();
+
+```
+
+## 创建行和列
+
+
+```C#
+    
+    //创建一个 4*4 的表格
+    for (int i = 0; i < 4; i++)
+    {
+        sheet.CreateRow(i);//创建i行
+        for (int j = 0; j < 4; j++)
+        {
+            sheet.GetRow(i).CreateCell(j);//在i某一行创建j列
+        }
+    }
+
+```
+
+## 写入内容
+
+```C#
+
+    //在创建好的 4*4 表格中填写内同
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            //IRow
+            ICell cell1 = sheet.GetRow(i).GetCell(j);
+            cell1.SetCellValue(num);
+            num++;
+        }
+    }
+
+```
+
+## 创建/打开 sheet页
+
+```C#
+
+    //创建一个新的名为SheetA的sheet页
+    ISheet sheet = wb.CreateSheet("SheetA");
+    //打开一个已有的名为SheetA的sheet页
+    ISheet sheet;
+    sheet = wb.GetSheet("SheetA")
+
+```
+
+## 合并单元格
+
+```C#
+
+    //合并第一行的第一列到第二列
+    sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 1));
+    //表格的行或者列都是从0开始
+    //参数的意义 从第0行开始到第0行结束 从第0列开始到第1列结束
+
+```
