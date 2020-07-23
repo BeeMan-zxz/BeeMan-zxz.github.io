@@ -167,7 +167,7 @@ namespace NPOI_Test_1
     //把wb写进sw文件中去
     wb.Write(sw);
     //资源释放  当时粗心把这个注释掉了 出现了程序跑起来之后创建了一个xls文件但是如果不把程序关了就打不开这个文件
-    sw.Close();  
+    sw.Close();
     wb.Close();
 
     //打开一个已有的xls文件
@@ -188,6 +188,24 @@ namespace NPOI_Test_1
     //打开一个已有的名为SheetA的sheet页
     ISheet sheet;
     sheet = wb.GetSheet("SheetA")
+
+```
+
+### 获得当前文件中所有sheet页
+
+```C#
+
+    List<ISheet> sheets = new List<ISheet>();
+            ISheet sheet = null;
+            int sheetCount = wb.NumberOfSheets;
+            for (int i = 0; i < sheetCount; i++)
+            {
+                sheet = wb.GetSheetAt(i);
+                if (sheet.LastRowNum > 0)
+                {
+                    sheets.Add(sheet);
+                }
+            }
 
 ```
 
@@ -237,3 +255,129 @@ namespace NPOI_Test_1
     //参数的意义 从第0行开始到第0行结束 从第0列开始到第1列结束
 
 ```
+
+
+### 判断当前单元格是否在合并单元格内
+
+```C#
+
+       /// <summary>
+        /// 判断是否在和并单元格中
+        /// </summary>
+        /// <param name="sheet">sheet表单</param>
+        /// <param name="rowIndex">行索引 0开始</param>
+        /// <param name="colIndex">列索引 0开始</param>
+        /// <param name="start">合并单元格左上角坐标</param>
+        /// <param name="end">合并单元格右下角坐标</param>
+        /// <returns>返回false表示非合并单元格</returns>
+        private static bool IsMergeCell(ISheet sheet, int rowIndex, int colIndex)
+        {
+            bool result = false;
+            Point start = new Point(0, 0);
+            Point end = new Point(0, 0);
+            if ((rowIndex < 0) || (colIndex < 0)) return result;
+            int regionsCount = sheet.NumMergedRegions;
+            for (int i = 0; i < regionsCount; i++)
+            {
+                CellRangeAddress range = sheet.GetMergedRegion(i);
+                //sheet.IsMergedRegion(range); 
+                if (rowIndex >= range.FirstRow && rowIndex <= range.LastRow && colIndex >= range.FirstColumn && colIndex <= range.LastColumn)
+                {
+                    start = new Point(range.FirstRow, range.FirstColumn);
+                    end = new Point(range.LastRow, range.LastColumn);
+                    result = true;
+                    break;
+                }
+            }
+            return result;
+        }
+
+```
+
+
+### 根据当前单元格获取所在的合并单元格的值
+
+
+```C#
+
+        /// <summary>
+        /// 获取合并单元格的值
+        /// </summary>
+        /// <param name="sheet">第一个sheet</param>
+        /// <param name="row">初始行</param>
+        /// <param name="column">初始列</param>
+        /// <returns></returns>
+        private static object GetMergedRegionStr(ISheet sheet, int row, int column)
+        {
+            //初始化坐标
+            Point start = new Point(0, 0);
+            Point end = new Point(0, 0);
+            //获取合并单元格的数量
+            int regionsCount = sheet.NumMergedRegions;
+            //初始化单元格的值
+            object cellValue = new object();
+            //判断坐标
+            for (int j = 0; j < regionsCount; j++)
+            {
+                //获得不同坐标
+                CellRangeAddress range = sheet.GetMergedRegion(j);
+                //判读参数坐标是否存在
+                if (row >= range.FirstRow && row <= range.LastRow && column >= range.FirstColumn && column <= range.LastColumn)
+                {
+                    //获取坐标
+                    start = new Point(range.FirstRow, range.FirstColumn);
+                    end = new Point(range.LastRow, range.LastColumn);
+                    //坐标x=row,y=colum
+                    int x = start.X;//获取所在坐标行号
+                    int y = start.Y;//获取所在坐标列号
+                    //获取所在行
+                    IRow fRow = sheet.GetRow(x);
+                    //获取所在列
+                    ICell fCell = fRow.GetCell(y);
+                    //判断cell的类型
+                    if (fCell.CellType == CellType.String)//string类型
+                    {
+                        cellValue = fCell.StringCellValue;
+                    }
+                    else if (fCell.CellType == CellType.Numeric)//数字类型
+                    {
+                        //判断是否是时间类型
+                        if (HSSFDateUtil.IsCellDateFormatted(fCell))
+                        {
+                            cellValue = fCell.DateCellValue;
+                        }
+                        else
+                        {
+                            cellValue = fCell.NumericCellValue;
+                        }
+ 
+                    }
+                    else if (fCell.CellType == CellType.Formula)//单元格有公式类型
+                    {
+                        cellValue = fCell.NumericCellValue;
+                    }
+                    else
+                    {
+                        cellValue = "";
+                    }
+                    break;
+                }
+            }
+            return cellValue;
+        }
+
+```
+
+
+### NPOI 自定义格式
+
+遇到自定义格式的数据想要获得值的时候需要提前获得它的自定义格式，然后把获得的值通过获得的自定义格式转换成想要需要的格式。
+
+![img](/img/NPOI-3 .png)
+`icell.ToString()` 获得的是 `C2+E2` ，如果遇到自定义格式得数据 得到的是没有格式得数据怎么办，比如想要获得DIK30+565 
+首先获取当前单元格的自定义格式，比如：
+string formatstring1 = ice1.CellStyle.GetDataFormatString();
+获得的就是这样的字符串 直接获得下图字符串
+![img](/img/NPOI-4.png)
+然后把获得的值通过获得的自定义格式转换成想要需要的格式  `NumericCellValue`(给当前单元格数据设置格式)
+`string value1 = ice1.NumericCellValue.ToString(formatstring1); DIK30+565`
