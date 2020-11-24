@@ -1,15 +1,16 @@
 ---
 layout:     post
-title:      "maven配置本地仓库"
-subtitle:   "maven配置本地仓库"
-date:       2020-11-24 11:58
+title:      "Java之初识maven"
+subtitle:   "maven创建本地库"
+date:       2020-11-24 13:00
 author:     "ZXZ"
 header-style:   "text"
 header-img: "img/post-bg-rwd.jpg"
 tags:
-    - JAVA
+    - Java
     - maven
 ---
+
 # maven配置本地仓库
 #####它是什么？
 Maven是一个项目管理工具，Maven项目对象模型(POM)，可以通过一小段描述信息来管理项目的构建，报告和文档的项目管理工具软件。
