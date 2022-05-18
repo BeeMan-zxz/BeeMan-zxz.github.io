@@ -1,0 +1,596 @@
+---
+layout:     post
+title:      "Vue之甘特图Gantt"
+subtitle:   "maven创建本地库"
+date:       2022-105-18 10:00
+author:     "ZXZ"
+header-style:   "text"
+header-img: "img/post-bg-rwd.jpg"
+tags:
+    - gantt
+    - vue
+    - 甘特图
+    - 横道图
+---
+
+
+**安装**
+
+``npm i dhtmlx-gantt -s``
+
+**引入**
+
+```vue
+// 引入模块
+
+ import gantt from 'dhtmlx-gantt'
+
+ import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
+```
+
+**视图**
+
+```vue
+<template>
+  <div class="warpper">
+    <div ref="gantt" class="gantt-container" />
+  </div>
+</template>
+
+<script>
+// 引入模块
+import gantt from 'dhtmlx-gantt'
+import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
+export default {
+  name: 'Gantt',
+  data() {
+    return {}
+  },
+  mounted() {
+  },
+  methods: {
+  },
+}
+</script>
+
+```
+
+**渲染**
+
+```javascript
+export default {
+  name: 'Gantt',
+  data() {
+    return {
+      // 甘特图配置
+      tasks: {
+        data: [],
+      },
+    }
+  },
+  mounted() {
+    this.init()
+  },
+  methods: {
+    // 初始化
+    init() {
+      // 自动延长时间刻度
+      gantt.config.fit_tasks = true
+      // 允许拖放
+      gantt.config.drag_project = true
+      // 定义时间格式
+      gantt.config.scales = [
+        { unit: 'month', step: 1, date: '%F, %Y' },
+        { unit: 'day', step: 1, date: '%j, %D' },
+      ]
+      // 添加弹窗属性
+      gantt.config.lightbox.sections = [
+        {
+          name: 'description',
+          height: 70,
+          map_to: 'text',
+          type: 'textarea',
+          focus: true,
+        },
+        { name: 'type', type: 'typeselect', map_to: 'type' },
+        { name: 'time', type: 'duration', map_to: 'auto' },
+      ]
+      // 初始化
+      gantt.init(this.$refs.gantt)
+      // 数据解析
+      gantt.parse(this.tasks)
+    }
+  }
+}
+
+```
+
+**数据**
+
+```javascript
+  data() {
+    return {
+      // 甘特图配置
+      tasks: {
+        data: [
+          {
+            id: 11,
+            text: 'Project #1',
+            type: gantt.config.types.project,
+            progress: 0.6,
+            open: true,
+          },
+
+          {
+            id: 12,
+            text: 'Task #1',
+            start_date: '03-04-2022',
+            duration: '5',
+            parent: '11',
+            progress: 1,
+            open: true,
+          },
+          {
+            id: 13,
+            text: 'Task #2',
+            start_date: '03-04-2022',
+            type: gantt.config.types.project,
+            parent: '11',
+            progress: 0.5,
+            open: true,
+          },
+          {
+            id: 14,
+            text: 'Task #3',
+            start_date: '02-04-2022',
+            duration: '6',
+            parent: '11',
+            progress: 0.8,
+            open: true,
+          },
+          {
+            id: 15,
+            text: 'Task #4',
+            type: gantt.config.types.project,
+            parent: '11',
+            progress: 0.2,
+            open: true,
+          },
+          {
+            id: 16,
+            text: 'Final milestone',
+            start_date: '15-04-2022',
+            type: gantt.config.types.milestone,
+            parent: '11',
+            progress: 0,
+            open: true,
+          },
+
+          {
+            id: 17,
+            text: 'Task #2.1',
+            start_date: '03-04-2022',
+            duration: '2',
+            parent: '13',
+            progress: 1,
+            open: true,
+          },
+          {
+            id: 18,
+            text: 'Task #2.2',
+            start_date: '06-04-2022',
+            duration: '3',
+            parent: '13',
+            progress: 0.8,
+            open: true,
+          },
+          {
+            id: 19,
+            text: 'Task #2.3',
+            start_date: '10-04-2022',
+            duration: '4',
+            parent: '13',
+            progress: 0.2,
+            open: true,
+          },
+          {
+            id: 20,
+            text: 'Task #2.4',
+            start_date: '10-04-2022',
+            duration: '4',
+            parent: '13',
+            progress: 0,
+            open: true,
+          },
+          {
+            id: 21,
+            text: 'Task #4.1',
+            start_date: '03-04-2022',
+            duration: '4',
+            parent: '15',
+            progress: 0.5,
+            open: true,
+          },
+          {
+            id: 22,
+            text: 'Task #4.2',
+            start_date: '03-04-2022',
+            duration: '4',
+            parent: '15',
+            progress: 0.1,
+            open: true,
+          },
+          {
+            id: 23,
+            text: 'Mediate milestone',
+            start_date: '14-04-2022',
+            type: gantt.config.types.milestone,
+            parent: '15',
+            progress: 0,
+            open: true,
+          },
+        ],
+        links: [
+          { id: '10', source: '11', target: '12', type: '1' },
+          { id: '11', source: '11', target: '13', type: '1' },
+          { id: '12', source: '11', target: '14', type: '1' },
+          { id: '13', source: '11', target: '15', type: '1' },
+          { id: '14', source: '23', target: '16', type: '0' },
+          { id: '15', source: '13', target: '17', type: '1' },
+          { id: '16', source: '17', target: '18', type: '0' },
+          { id: '17', source: '18', target: '19', type: '0' },
+          { id: '18', source: '19', target: '20', type: '0' },
+          { id: '19', source: '15', target: '21', type: '2' },
+          { id: '20', source: '15', target: '22', type: '2' },
+          { id: '21', source: '15', target: '23', type: '0' },
+        ],
+      },
+    }
+  },
+
+```
+
+#### 拓展
+
+一些设置都需要在  `gantt.init(this.$refs.gantt) // 初始化` 之前完成
+     
+
+> 最初的样子，可以作为参照
+
+![img](/img/0-vue之gantt/1563418-20220215104036686-882095909.png)
+
+##### 修改时间格式
+
+![image-20220506145220533](/img/0-vue之gantt/image-20220506145220533.png)
+
+**修改前：**
+
+```javascript
+	  // 定义时间格式
+      gantt.config.scales = [
+        { unit: 'month', step: 1, date: '%F, %Y' },
+        { unit: 'day', step: 1, date: '%j, %D' },
+      ]
+
+		// 初始化
+        gantt.init(this.$refs.gantt)
+```
+
+**修改后：**
+
+```javascript
+		// 定义时间格式
+        gantt.config.scales = [
+          { unit: 'year', step: 1, date: '%Y' },
+          { unit: 'month', step: 1, date: '%F' },
+          { unit: 'week', step: 1, date: '%w' },
+        ]
+
+		// 初始化
+        gantt.init(this.$refs.gantt)
+```
+
+##### 修改模板内容（横道内容）
+
+**添加代码**
+
+```javascript
+		//横道内容
+        gantt.templates.task_text=function(start,end,task){
+          return "<b>Name:</b> "+task.text+",<b> Holders:</b> "+task.users;
+        };
+
+		// 初始化
+        gantt.init(this.$refs.gantt)
+```
+
+##### 删除关联关系
+
+**修改前**
+
+```javascript
+		links: [
+          { id: '10', source: '11', target: '12', type: '1' },
+          { id: '11', source: '11', target: '13', type: '1' },
+          { id: '12', source: '11', target: '14', type: '1' },
+          { id: '13', source: '11', target: '15', type: '1' },
+          { id: '14', source: '23', target: '16', type: '0' },
+          { id: '15', source: '13', target: '17', type: '1' },
+          { id: '16', source: '17', target: '18', type: '0' },
+          { id: '17', source: '18', target: '19', type: '0' },
+          { id: '18', source: '19', target: '20', type: '0' },
+          { id: '19', source: '15', target: '21', type: '2' },
+          { id: '20', source: '15', target: '22', type: '2' },
+          { id: '21', source: '15', target: '23', type: '0' },
+        ],
+```
+
+**修改后**
+
+```javascript
+		links: [
+
+          ],
+```
+
+##### 计划类型
+
+![image-20220506153002093](/img/0-vue之gantt/image-20220506153002093.png)
+
+##### 台面配置信息补充
+
+![image-20220506153103176](/img/0-vue之gantt/image-20220506153103176.png)
+
+```javascript
+		//表头数据        
+		gantt.config.columns = [
+          { name: "text", label: "项目", tree: true, width: "*" },
+          { name: "start_date", label: "开始时间",  width: "*" },
+          { name: "users", label: "负责人", align: "center" }
+        ];
+
+ 		//横道内容
+        gantt.templates.task_text=function(start,end,task){
+          return "<b>计划:</b> "+task.text+",<b> 负责人:</b> "+task.users;
+        };
+```
+
+##### 使用中文
+
+```javascript
+		//使用中文
+        gantt.i18n.setLocale("cn");
+```
+
+##### 左侧表格宽度
+
+```javascript
+		//设置左侧表格的宽度
+        gantt.config.grid_width = 460;
+```
+
+##### 添加今天的标记线
+
+![image-20220506161814746](/img/0-vue之gantt/image-20220506161814746.png)
+
+```javascript
+ 		gantt.plugins({
+          marker: true
+        });
+
+		//今天的标记线
+        var dateToStr = gantt.date.date_to_str(gantt.config.task_date);
+        var markerId = gantt.addMarker({
+          start_date: new Date(), //a Date object that sets the marker's date
+          css: "today", //a CSS class applied to the marker
+          text: "Now", //the marker title
+          title: dateToStr( new Date()) // the marker's tooltip
+        });
+        gantt.getMarker(markerId); //->{css:"today", text:"Now", id:...}
+```
+
+##### 换皮肤
+
+https://docs.dhtmlx.com/gantt/desktop__skins.html
+
+去官网找到一款皮肤，点击查看，打开超级管理员模式
+
+![image-20220506163634653](/img/0-vue之gantt/image-20220506163634653.png)
+
+复制替换此文件
+
+![image-20220506163711608](/img/0-vue之gantt/image-20220506163711608.png)
+
+
+
+##### 甘特图元素的工具提示
+
+```javascript
+		gantt.plugins({
+          marker: true,
+          tooltip: true
+        });
+        
+        // 甘特图元素的工具提示
+        gantt.templates.tooltip_text = function(start, end, task){
+          return "<b>任务内容:</b>" + task.text +
+                  "<br/><b>负责人:</b> " + task.users +
+                  "<br/><b>计划开始:</b> " + task.start_date +
+                  "<br/><b>进度:</b> " + task.progress +
+                  "<br/><b>期限:</b> " + task.duration + '天'
+        };
+```
+
+![image-20220506164949801](/img/0-vue之gantt/image-20220506164949801.png)
+
+#### 实战经历
+
+使用官网提供的 **gantt.vue** 
+
+引入组件
+
+```vue
+<gantt class="left-container" style="height: calc(100% - 30px)" :tasks="tasks" @task-updated="logTaskUpdate" @link-updated="logLinkUpdate" @task-selected="selectTask"></gantt>
+```
+
+##### 导入/导出
+
+**导入xml/mpp**
+
+`exportToMSProject` 这里是用官方提供的  **gantt.vue** 的方法
+
+```html
+<input type=button onclick="gantt.exportToMSProject({})" value="export" />
+```
+
+**导出xml**
+
+`importFromMSProject` 这里是用官方的例子中的方法
+
+```html
+        <div class="upload-btn-box">
+            <input ref="filElem" type="file" class="upload-file">
+            　　<Button @click="getFile" icon="ios-cloud-upload-outline" type="primary">加载</Button>
+        </div>
+
+```
+
+```javascript
+            getFile(){
+                const that = this;
+                const inputFile = this.$refs.filElem.files[0];
+                gantt.importFromMSProject({
+                    data: inputFile,
+                    skip_circular_links: false,
+                    //添加两个自定义属性 配合 attachEvent 使用
+                    taskProperties: ["predecessorLink","wbsCode"],
+                    callback: function (project) {
+                        if (project) {
+                            //清楚之前的数据
+                            gantt.clearAll();
+
+                            //继承甘特图的一些配置
+                            if (project.config.duration_unit) {
+                                gantt.config.duration_unit = project.config.duration_unit;
+                            }
+                            //填入数据
+                            gantt.parse(project.data);
+
+                            //根据link计算前置任务，官方接口收费
+                            that.computerPredecessorLink(gantt);
+                            //委托,遍历每个任务,得到 WBS 值
+                            gantt.eachTask(function(task){task.wbsCode = gantt.getWBSCode(gantt.getTask(task.id))})
+
+                            let taskCount = gantt.getTaskCount();
+                            let linkCount = gantt.getLinkCount();
+                            project.taskCount = taskCount;
+                            project.linkCount = linkCount;
+                            // that.ajax.post('/Gantt/ImportGantteDataToDB',that.qs.stringify(project)).then(res=>{
+                            //     // console.log(res)
+                            // })
+                        }
+                        //
+                        // if (callback)
+                        //     callback(project);
+                    }
+                });
+                
+                //从数据源加载任务时触发
+    			gantt.attachEvent("onTaskLoading", function(task) {
+                    if (task.$custom_data) {
+                        //可以获取一些扩展属性值，可以查看官网[https://docs.dhtmlx.com/gantt/desktop__tags.html#projectproperties]支持的属性列表
+                        task.predecessorLink = task.$custom_data["predecessorLink"];
+                        //可以用来存储一些自定义参数
+                        task.wbsCode = "";
+                    }
+                    return true;
+                });
+                
+                // gantt.attachEvent("onLinkLoading", function(link) {
+                //
+                //     return true;
+                // });
+    
+                //根据link计算前置任务字符串
+                //link 的一些属性包含了前置条件信息
+                computerPredecessorLink(gantt){
+                    gantt.getLinks().map(link=>{
+                        let predecessorLink
+                        if(link.type != 0){
+                            if(link.lag == 0){
+                                predecessorLink = link.source + this.linkType[link.type];
+                            }else{
+                                predecessorLink = link.source + this.linkType[link.type] + "+" + link.lag + "个工作日";
+                            }
+                        }else{
+                            if(link.lag == 0){
+                                predecessorLink = link.source;
+                            }else{
+                                predecessorLink = link.source + "+" + link.lag + "个工作日";
+                            }
+                        }
+                        let task = gantt.getTaskByIndex(link.target - 1);
+                        task.predecessorLink = predecessorLink;
+                        gantt.refreshTask(task.id);
+                    })
+                },
+                
+```
+
+##### 填入数据
+
+`gantt.parse(this.tasks);`
+
+##### 日、周、年切换
+
+```html
+<div class="top" style="height: 30px">
+    <el-radio-group v-model="radio" @change="changeScales">
+        <el-radio :label="1">月</el-radio>
+        <el-radio :label="2">周</el-radio>
+        <el-radio :label="3">日</el-radio>
+    </el-radio-group>
+</div>
+```
+
+```javascript
+changeScales(){
+    if(this.radio === 1){
+        gantt.config.scales = [
+            { unit: 'month', step: 1, date: '%F, %Y' },
+            { unit: 'month', step: 1, date: '%M' },
+        ]
+        gantt.render();
+    }else if(this.radio === 2){
+        gantt.config.scales = [
+            { unit: 'month', step: 1, date: '%F, %Y' },
+            {unit: "week", step: 1, format: "%W"}
+        ]
+        gantt.render();
+    }else if(this.radio === 3){
+
+        gantt.config.scales = [
+            { unit: 'month', step: 1, date: '%F, %Y' },
+            {unit: "day", step: 1, format: "%D"}
+        ]
+        gantt.render();
+    }
+},
+
+```
+
+### dhtmlx-Gantt
+
+官方文档参考连接： 
+
+- [task_height](https://docs.dhtmlx.com/gantt/api__gantt_task_height_config.html)
+- [scale_height](https://docs.dhtmlx.com/gantt/api__gantt_scale_height_config.html)
+- [row_height](https://docs.dhtmlx.com/gantt/api__gantt_row_height_config.html)
+- https://docs.dhtmlx.com/gantt/api__gantt_addmarker.html
+- https://docs.dhtmlx.com/gantt/desktop__initializing_gantt_chart.html
+
+其他配置参考连接：
+
+https://www.csdn.net/tags/OtTaUg2sNDk2Mi1ibG9n.html
+
+https://blog.csdn.net/qq_24472595/article/details/81630117?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.control
