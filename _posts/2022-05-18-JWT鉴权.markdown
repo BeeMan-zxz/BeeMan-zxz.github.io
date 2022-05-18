@@ -1,0 +1,385 @@
+
+---
+layout:     post
+title:      "登录鉴权"
+subtitle:   "前端Vue,后端asp.net core使用JWT做的鉴权功能,可以分配菜单权限"
+date:       2022-05-18 16:00
+author:     "ZXZ"
+header-style:   "text"
+header-img: "img/post-bg-rwd.jpg"
+tags:
+    - JWT
+---
+
+# JWT 
+
+**JWT是一种认证机制， 通过把用户信息通过加密后生成的一个字符串，让后台知道请求是来自于受信的客户端**
+
+**原理**
+
+​	JWT的原则是在服务器身份验证之后，将生成一个JSON对象并将其发送回用户之后，当用户与服务器通信时，客户在请求中发回JSON对象，服务器仅依赖于这个JSON对象来标识用户。 为了防止用户篡改数据，服务器将在生成对象时添加签名（有关详细信息，请参阅下文）。 服务器不保存任何会话数据，即服务器变为无状态，使其更容易扩展。
+
+![img](/img/2-JWT鉴权/900b3e81f832b2f08c2e8aabb540536a.png)
+
+**结构**：JWT是由三部分组成
+
+ * **JWT头**
+
+   `base64UrlEncode(header)`  字符串
+
+   ```json
+   JWT头部分是一个描述JWT元数据的JSON对象，通常如下所示。
+   
+   {
+      "alg": "HS256",
+      "typ": "JWT"
+   }
+   
+   alg属性表示签名使用的算法，默认为HMAC SHA256（写为HS256）；
+   
+   typ属性表示令牌的类型，JWT令牌统一写为JWT。
+   
+   最后，使用Base64 URL算法将上述JSON对象转换为字符串保存。
+   ```
+
+   
+
+ * ##### 有效载荷 没有敏感数据的用户信息
+
+   `base64UrlEncode(payload)`  字符串
+
+   ```
+   #1、有效载荷部分，是JWT的主体内容部分，也是一个JSON对象，包含需要传递的数据。 JWT指定七个默认 字段供选择。
+   '''
+   iss：发行人
+   exp：到期时间
+   sub：主题
+   aud：用户
+   nbf：在此之前不可用
+   iat：发布时间
+   jti：JWT
+   ID用于标识该JWT
+   '''
+   
+   #2、除以上默认字段外，我们还可以自定义私有字段，如下例：
+   {
+   "sub": "1234567890",
+   "name": "chongchong",
+   "admin": true
+   }
+   #3、注意 默认情况下JWT是未加密的，任何人都可以解读其内容，因此不要构建隐私信息字段，存放保密信息，以防 止信息泄露。
+   JSON对象也使用Base64 URL算法转换为字符串保存
+   ```
+
+   
+
+ * **签名哈希**
+
+   签名 = HMACSHA256(`base64UrlEncode(header)`+"."+`base64UrlEncode(payload)`,secret)
+
+	1.签名哈希部分是对上面两部分数据签名，通过指定的算法生成哈希，以确保数据不会被篡改。
+	2.首先，需要指定一个密码（secret），该密码仅仅为保存在服务器中，并且不能向用户公开。
+	
+	3.然后，使用标头中指定的签名算法（默认情况下为HMAC SHA256）根据以下公式生成签名。
+	
+	4.HMACSHA256(base64UrlEncode(header) + "." + base64UrlEncode(payload),secret)
+	
+	5.在计算出签名哈希后，JWT头，有效载荷和签名哈希的三个部分组合成一个字符串，每个部分用"."分 隔，就构成整个JWT对象
+**核心**
+
+ * 给用户颁发的token值相当于一把锁，服务器端的秘钥相当于一把钥匙
+ * 每次客户端请求都会携带这把锁，服务器端用秘钥去开这把锁，若果无法打开就证明是伪造的
+
+**jwt特点分析**
+
+* JWT的最大缺点是服务器不保存会话状态，所以在使用期间不可能取消令牌或更改令牌的权
+
+  限，一旦JWT签发，在有效期内将会一直有效。
+
+* JWT本身包含认证信息，因此一旦信息泄露，任何人都可以获得令牌的所有权限。
+
+* 为了减少盗用和窃取，JWT不建议使用HTTP协议来传输代码，而是使用加密的HTTPS协议进行
+
+  传输。
+
+* JWT不仅可用于认证，还可用于信息交换，善用JWT有助于减少服务器请求数据库的次数。
+
+# 在 asp.net WebApi 中使用 JWT
+
+## 1、首先创建一个JWT文件夹存储JWT相关数据类
+
+![image-20220322094534409](/img/2-JWT鉴权/image-20220322094534409.png)
+
+```c#
+	/// <summary>
+    /// 身份验证信息 模拟JWT的payload
+    /// </summary>
+    public class AuthInfo
+    {
+        /// <summary>
+        /// 用户名
+        /// </summary>
+        public string UserName { get; set; }
+
+        /// <summary>
+        /// 角色
+        /// </summary>
+        public string Job { get; set; }
+
+        /// <summary>
+        /// 是否管理员
+        /// </summary>
+        public bool IsAdmin { get; set; }
+
+        /// <summary>
+        /// 口令过期时间
+        /// </summary>
+        public DateTime? ExpiryDateTime { get; set; }
+    }
+```
+
+​	
+
+```c#
+	/// <summary>
+    /// 生成的口令信息
+    /// </summary>
+    public class TokenInfo
+    {
+        /// <summary>
+        /// 是否成功
+        /// </summary>
+        public bool Success { get; set; }
+        /// <summary>
+        /// 令牌
+        /// </summary>
+        public string Token { get; set; }
+        /// <summary>
+        /// 错误信息
+        /// </summary>
+        public string Message { get; set; }
+    }
+```
+
+```c#
+	public static class JWTUtil
+    {
+        public const string secretKey = "JingKongGuanLiWebKey";//口令加密秘钥
+        /// <summary>
+        /// 获取Token
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public static TokenInfo GetTokenInfo(User user)
+        {
+            TokenInfo tokenInfo = new TokenInfo();
+            if (user != null)
+            {
+                tokenInfo.Success = true;
+                tokenInfo.Message = "成功获取用户信息";
+               
+                AuthInfo authInfo = new AuthInfo
+                {
+                    UserName = user.userName,
+                    Job = user.job,
+                    IsAdmin = user.job == "管理员"?true:false,
+                    ExpiryDateTime = DateTime.Now.AddHours(2),
+                };
+                try
+                {
+                    byte[] key = Encoding.UTF8.GetBytes(secretKey);
+                    IJwtAlgorithm algorithm = new HMACSHA256Algorithm();//加密方式
+                    IJsonSerializer serializer = new JsonNetSerializer();//序列化Json
+                    IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();//base64加解密
+                    IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);//JWT编码
+                    var token = encoder.Encode(authInfo, key);//生成令牌
+                    //口令信息
+                    tokenInfo.Success = true;
+                    tokenInfo.Token = token;
+                    tokenInfo.Message = "OK";
+                }
+                catch (Exception ex)
+                {
+                    tokenInfo.Success = false;
+                    tokenInfo.Message = ex.Message.ToString();
+                }
+            }
+            else
+            {
+                tokenInfo.Success = false;
+                tokenInfo.Message = "用户信息为空";
+            }
+
+            return tokenInfo;
+        }
+
+        
+    }
+```
+
+## 2、拦截器
+
+![image-20220322095249181](/img/2-JWT鉴权/image-20220322095249181-16479139709752.png)
+
+```c#
+public class ApiAuthorizeAttribute : AuthorizeAttribute
+    {
+        protected override bool IsAuthorized(HttpActionContext actionContext)
+        {
+            //前端请求api时会将token存放在名为"auth"的请求头中
+            var authHeader = from t in actionContext.Request.Headers where t.Key == "auth" select t.Value.FirstOrDefault();
+            if (authHeader != null)
+            {
+                string token = authHeader.FirstOrDefault();//获取token
+                if (!string.IsNullOrEmpty(token))
+                {
+                    try
+                    {
+                        byte[] key = Encoding.UTF8.GetBytes(JWTUtil.secretKey);
+                        var algorithm = new HMACSHA256Algorithm();
+                        IJsonSerializer serializer = new JsonNetSerializer();
+                        IDateTimeProvider provider = new UtcDateTimeProvider();
+                        IJwtValidator validator = new JwtValidator(serializer, provider);
+                        IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
+                        IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithm);
+                        //解密
+                        var json = decoder.DecodeToObject<AuthInfo>(token, key, verify: true);
+                        if (json != null)
+                        {
+                            //判断口令过期时间
+                            if (json.ExpiryDateTime < DateTime.Now)
+                            {
+                                return false;
+                            }
+                            //把树蕨添加到 Request 中
+                            actionContext.Request.Properties.Add("auth", json);
+                            return true;
+                        }
+                        return false;
+                    }
+                    catch (Exception ex)
+                    {
+                        return false;
+                    }
+                }
+                return false;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 处理授权失败的请求
+        /// </summary>
+        /// <param name="actionContext"></param>
+        protected override void HandleUnauthorizedRequest(HttpActionContext actionContext)
+        {
+            var erModel = new
+            {
+                Success = "false",
+                ErrorCode = "401"
+            };
+            actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.OK, erModel, "application/json");
+        }
+    }
+
+```
+
+## 3、 测试
+
+获取 Token
+
+```c#
+		/// <summary>
+        /// 登录用户获取Token
+        /// </sapi/User/GetUserByUserNameummary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public TokenInfo PostLogin([FromBody] Newtonsoft.Json.Linq.JObject data)
+        {
+            dynamic request = data;
+            string userName = request["userName"];
+            string passWorld = request["passWorld"];
+            User user = DB.Context.From<User>().Where(d => d.userName == userName).First();
+            return JWTUtil.GetTokenInfo(user);
+        }
+```
+
+验证 Token
+
+```c#
+ 		// GET api/values/5
+        public string GetTest()
+        {
+            object someObject;
+            Request.Properties.TryGetValue("auth", out someObject);
+            return someObject.ToString();
+        }
+```
+
+## Vue 把 Token 塞进 header
+
+![image-20220518155116535](/img/2-JWT鉴权/image-20220518155116535.png)
+
+使用到了 js-cookie 插件（保存、获取 cookie 功能 ）、Router 插件（路由嵌套、导航、导航守卫）
+
+### 安装 `js-cookie`
+
+`npm install js-cookie --save`
+
+### 登录时获取 Token
+
+```javascript
+login() {
+            let params = {
+                userName: this.user.username,
+                passWorld: this.user.password,
+            };
+            console.log(params)
+            this.ajax.post("api/User/PostLogin", params).then(res => {
+                if (res){
+                    if(res.data.Success){
+                        this.$cookie.set('token', res.data.Token, {expires: 60 * 60 * 2})
+                        this.$router.push('/index')
+                    }else{
+                        this.$message('登录失败');
+                    }
+                }
+            }).catch(()=>{
+
+            })
+        },
+```
+
+### 在 main.js 中添加拦截器
+
+```javascript
+//请求拦截器
+axios.interceptors.request.use(
+    (config) => {
+        config.headers['auth'] = jsCookie.get('token');
+        return config
+    }, (error) => {
+        return Promise.reject(error)
+    }
+);
+```
+
+### 在 router.js 中添加一个导航守卫
+
+```javascript
+//导航守卫
+router.beforeEach((to,from,next)=>{
+    if (to.path === '/login') {
+        next()
+    }else{
+        const token = cookies.get('token');
+        if(!token){
+            next('/login')
+        }else{
+            next();
+        }
+    }
+})
+```
+

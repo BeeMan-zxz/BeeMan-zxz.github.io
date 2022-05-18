@@ -1,0 +1,111 @@
+
+---
+layout:     post
+title:      "Vue 操作 Excel 导入导出"
+subtitle:   "Vue 操作 Excel 导入导出"
+date:       2022-05-18 16:00
+author:     "ZXZ"
+header-style:   "text"
+header-img: "img/post-bg-rwd.jpg"
+tags:
+    - Vue
+    - Excel
+---
+
+
+# Vue 操作 Excel 导入导出
+
+安装：`npm install --save xlsx file-saver`
+
+配合 elementUi 的 Excel 内容读取：
+
+```javascript
+<el-upload
+  action
+  accept=".xlsx,.xls"
+  :show-file-list="false"
+  :auto-upload="false"
+  :on-change="excelInput">
+  <el-button size="small" type="primary">Excel导入</el-button>
+</el-upload>
+
+
+import * as xlsx from "xlsx"
+
+		//Excel导入
+          async excelInput(ev) {
+            let file = ev.raw;
+            if (!file) return;
+            //以二进制的方式读取File中的数据
+            let data = await readFile(file);
+            //根据 excel文件的二进制 读取转为 woorkBook对象
+            let workBook = xlsx.read(data, {type: "binary"})
+            //第一个sheet页内容
+            let worksheet = workBook.Sheets[workBook.SheetNames[0]]
+            //把内容转换为 json 类型
+            data = xlsx.utils.sheet_to_json(worksheet);
+            console.log(data);
+          },
+              
+              //把文件按照二进制进行读取
+                export function readFile(file){
+                  return new Promise(resolve => {
+                    let reader = new FileReader();
+                    reader.readAsBinaryString(file);
+                    reader.onload = ev => {
+                      resolve(ev.target.result);
+                    }
+                  })
+                },
+```
+
+配合 file-saver 的 Excel 内容写入与文件导出
+
+```javascript
+<el-button class="submit" @click="downMuBan">下载模板</el-button>
+<el-button class="submit" @click="down">Excel导出</el-button>
+
+  import * as xlsx from "xlsx"
+  import FileSaver from "file-saver"
+  
+  //Excel导出
+      excelOutput(content) {
+          //excel样式
+        const defaultCellStyle = {
+          font: {name: "Verdana", sz: 11, color: "FF00FF88"},
+          fill: {fgColor: {rgb: "FFFFAA00"}}
+        };
+        const wopts = {
+          bookType: "xlsx",
+          bookSST: false,
+          type: "binary",
+          defaultCellStyle: defaultCellStyle,
+          showGridLines: false
+        };
+        const wb = {SheetNames: ["Sheet1"], Sheets: {}, Props: {}};
+        let data = content;
+        wb.Sheets["Sheet1"] = xlsx.utils.json_to_sheet(data);
+
+        //创建二进制对象写入转换好的字节流
+        let tmpDown = new Blob([this.s2ab(xlsx.write(wb, wopts))], {
+          type: "application/octet-stream"
+        });
+        // 保存文件
+        FileSaver.saveAs(tmpDown, "hello world.xls");
+      },
+      
+      // 字符串转字符流
+      s2ab(s) {
+        if (typeof ArrayBuffer !== "undefined") {
+          let buf = new ArrayBuffer(s.length);
+          let view = new Uint8Array(buf);
+          for (let i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xff;
+          return buf;
+        } else {
+          let buf = new Array(s.length);
+          for (let j = 0; j != s.length; ++j) buf[j] = s.charCodeAt(j) & 0xff;
+          return buf;
+        }
+      },
+```
+

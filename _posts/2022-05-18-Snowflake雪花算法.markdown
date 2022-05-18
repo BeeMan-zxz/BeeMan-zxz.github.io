@@ -1,3 +1,16 @@
+---
+layout:     post
+title:      "Snowflake雪花算法"
+subtitle:   "asp.net core 使用雪花算法"
+date:       2022-05-18 15:00
+author:     "ZXZ"
+header-style:   "text"
+header-img: "img/post-bg-rwd.jpg"
+tags:
+    - Snowflake
+    - asp.net core
+---
+
 # Snowflake 雪花算法
 
 ![image-20220517094546712](/img/1-Snowflake雪花算法/image-20220517094546712.png)

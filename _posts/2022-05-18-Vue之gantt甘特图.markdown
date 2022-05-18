@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "Vue之甘特图Gantt"
-subtitle:   "maven创建本地库"
+subtitle:   "Vue使用 dhtmlx-gantt 生成甘特图"
 date:       2022-05-18 10:00
 author:     "ZXZ"
 header-style:   "text"

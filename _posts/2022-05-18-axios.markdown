@@ -1,0 +1,70 @@
+---
+layout:     post
+title:      "axios"
+subtitle:   "axios使用经验总结"
+date:       2022-05-18 16:00
+author:     "ZXZ"
+header-style:   "text"
+header-img: "img/post-bg-rwd.jpg"
+tags:
+    - axios
+---
+
+# vue 引入 axios
+
+`npm install axios --save`
+
+在 mian.js 中引入并挂接到Vue属性上
+
+```vue
+import axios from "axios";
+
+Vue.prototype.ajax = axios
+```
+
+# 传参问题
+
+## Json字符串
+
+前端传递一个Object对象过去（Object对象可以看做是Json对象）
+
+需要转为Json字符串 ` that.qs.stringify(o)`
+
+后端接收
+
+![image-20220518160941415](/img/3-axios/image-20220518160941415.png)
+
+# 跨域问题 （跨域代理）
+
+解决跨域问题：在 vue.config.js 中加入
+
+```
+devServer：{
+    proxy: {
+        '/search': {
+            target: 'https://api.map.baidu.com/place/v2',  //目标接口域名
+            changeOrigin: true,  //是否跨域
+            pathRewrite: {
+                '^/search': '/search'   //重写接口 后台接口指向不统一  所以指向所有/
+            }
+        },
+    }
+}
+
+```
+
+原来接口：
+
+CSDN：`https://www.csdn.net/api/articles?type=more&category=home&shown_offset=1524276761019196&first_view=false`
+
+掘金：`https://suggest-follow-api-ms.juejin.im/v1/getByTag?tag=%E5%89%8D%E7%AB%AF&src=web&t=1`
+
+![image-20220210105723496](/img/3-axios/image-20220210105723496.png)
+
+配置 proxy 后请求连接变为下图所示 （有的人说 配置 proxyType，我用这个就会失败）
+
+![img](/img/3-axios/1180395-20180421173405626-1245942528.png)
+
+
+
+![img](/img/3-axios/1180395-20180421173447763-1398900761.png)
