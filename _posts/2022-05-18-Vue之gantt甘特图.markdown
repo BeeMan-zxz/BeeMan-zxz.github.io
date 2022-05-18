@@ -9,8 +9,6 @@ header-img: "img/post-bg-rwd.jpg"
 tags:
     - gantt
     - vue
-    - 甘特图
-    - 横道图
 ---
 
 
