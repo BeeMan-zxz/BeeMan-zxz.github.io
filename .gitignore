@@ -1,8 +1,10 @@
 _site
 node_modules
+.idea
 npm-debug.log
 .DS_Store
 */.DS_Store
 */*/.DS_Store
 *.sh
 .vscode
+.gitignore
